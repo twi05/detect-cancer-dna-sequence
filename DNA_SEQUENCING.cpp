@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+#include <fstream>
 using namespace std;
 typedef long long ll;
 
@@ -78,7 +79,7 @@ void split_c(string str, CancerGenomics &c)
         if (x == ',')
         {
             c.name = w;
-            w = "";          
+            w = "";
         }
         else
         {
@@ -129,17 +130,30 @@ int main()
         cout << "Could not open the file\n";
     }
 
+    fstream fout;
+    int status;
+
+    fout.open("dna_lcs.csv", ios::out);
+
     vector<cg> cancerdata(v.size());
 
+    fout << "Name of Cancer"
+         << ","
+         << "Stage of Cancer"
+         << "\n";
+
     // input person data. Also give option to see demo. Means ask user to input or demo with default person dna sequence
-    string person_dna_sequence = "FWLQIJTVDWVKDBWBLDVGYL";
+
+    // string person_dna_sequence = "CXGGBWKFNPPUXWFNFOZVSR";
+    // string person_dna_sequence = "WHMSNCBXCOKSFZKVATXDKN";
+    string person_dna_sequence = "KDCPWSRTESJWHDIZCOBZCN";
+    
     int matched_sequence = 0;
     bool foundCancer = false;
     int cancerStage = 0;
     int total_cancers_found = 0;
     for (int i = 0; i < v.size(); i++)
     {
-
         split_c(v[i], cancerdata[i]);
 
         vector<vector<int>> v(person_dna_sequence.length() + 1, vector<int>(cancerdata[i].sequence.length() + 1, 0));
@@ -148,11 +162,13 @@ int main()
         {
             foundCancer = true;
             cout << "Found Cancer. Type of cancer: " << cancerdata[i].name << endl;
-            cout << "Stage of cancer:  " << (double)matched_sequence/22 << endl;
+            cout << "Stage of cancer:  " << (double)matched_sequence / 22 << endl;
+            fout << cancerdata[i].name << "," << (double)matched_sequence / 22 << "\n"; // writing data to a csv file
             total_cancers_found++;
-            cout<<endl;
+            cout << endl;
         }
     }
+    fout.close();
     if (foundCancer)
         cout << "\nTotal primary cancers found: " << total_cancers_found;
     if (!foundCancer)
